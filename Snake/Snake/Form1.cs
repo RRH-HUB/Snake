@@ -12,9 +12,16 @@ namespace Snake
 {
     public partial class Form1 : Form
     {
+        
         SnakeTail head;//declaro la cabeza
         Graphics g;
+        Piedra piedra;
         Food food;
+        Random rnd;
+        int aux;
+        System.Media.SoundPlayer comer;
+        System.Media.SoundPlayer morir;
+
         int score = 0;
         //para moverse solo en 4 direcciones posibles y solo 1 cada vez
         int direcx = 0;
@@ -26,10 +33,15 @@ namespace Snake
 
         public Form1()
         {
+            
             InitializeComponent();
-            head = new SnakeTail(10, 10);//instancio cabeza
+            head = new SnakeTail(20, 20);//instancio cabeza
             g = Canvas.CreateGraphics();
+            piedra = new Piedra();
             food = new Food();
+            morir = new System.Media.SoundPlayer(@"C:\Users\faliw\OneDrive\Escritorio\Snake c#\Snake\1234.wav");
+            comer = new System.Media.SoundPlayer(@"C:\Users\faliw\OneDrive\Escritorio\Snake c#\Snake\EAT1.wav");
+            rnd = new Random(100);
         }
         public void movimientos()
         {
@@ -39,6 +51,7 @@ namespace Snake
         private void bucle_Tick(object sender, EventArgs e)
         {
             g.Clear(Color.White);
+            piedra.Draw(g);
             head.Draw(g);
             food.Draw(g);
             movimientos();
@@ -46,10 +59,30 @@ namespace Snake
             wallcrash();
             if (head.Colision(food))
             {
-                food.newFood();
+                
                 head.eat();
                 score++;
                 Puntos.Text = score.ToString();
+                comer.Play();
+                aux = rnd.Next()*10;
+                if(aux >= 30)
+                {
+                    food.multipleFood();
+                }
+                else
+                {
+                    food.newFood();
+                }
+                if(aux > 40 )
+                {
+                    piedra.Colocar();
+                    if (piedra.Colision(food))
+                    {
+                        food.newFood();
+                    }
+                }
+              
+               
             }
         }
         public void End()
@@ -61,7 +94,7 @@ namespace Snake
             ejex = true;
             ejey = true;
             food = new Food();
-            head = new SnakeTail(10, 10);
+            head = new SnakeTail(20, 20);
             MessageBox.Show("GAME OVER");
 
         }
@@ -69,11 +102,18 @@ namespace Snake
         {
             if (head.getx() < 0 || head.getx() > Canvas.Width || head.gety() < 0 || head.gety() > Canvas.Height)
             {
+                morir.Play();
+                End();
+            }
+            if (head.Colision(piedra))
+            {
+                morir.Play();
                 End();
             }
         }
         public void eatItself()
         {
+           
             SnakeTail temp;
             try
             {
@@ -88,6 +128,7 @@ namespace Snake
             {
                 if (head.Colision(temp))
                 {
+                    morir.Play();
                     End();
                 }
                 else
@@ -97,14 +138,7 @@ namespace Snake
             }
             
         }
-        public int getAltCanvas()
-        {
-            return (int)Canvas.Height;
-        }
-        public int getAnchoCanvas()
-        {
-            return (int)Canvas.Width;
-        }
+       
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             if (ejex == true)

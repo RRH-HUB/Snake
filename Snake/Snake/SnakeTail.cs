@@ -10,10 +10,13 @@ namespace Snake
     class SnakeTail:Comun
     {
         SnakeTail next;
-        public SnakeTail(int x , int y)
+        
+        public SnakeTail(int x , int y1)
         {
             this.x = x;
             this.y = y;
+           
+            
 
         }
         public void Draw(Graphics g)
@@ -23,7 +26,7 @@ namespace Snake
                 next.Draw(g);
             }
             //dibujamos la serpiente y su cola
-            g.FillRectangle(new SolidBrush(Color.Red), this.x, this.y, this.ancho, this.ancho);
+            g.FillRectangle(new SolidBrush(Color.DarkGoldenrod), this.x, this.y, this.ancho, this.ancho);
         }
         public SnakeTail tail()
         {
@@ -35,9 +38,10 @@ namespace Snake
             {
                 next.mover(this.x, this.y);
             }
+            
             this.x = x;
             this.y = y;
-
+            
         }
         public void eat()
         {
@@ -45,6 +49,7 @@ namespace Snake
             {
                 next = new SnakeTail(this.x, this.y);
             }
+           
             else
             {
                 next.eat();
@@ -58,5 +63,6 @@ namespace Snake
         {
             return y;
         }
+        
     }
 } 
